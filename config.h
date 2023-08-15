@@ -1,5 +1,10 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #ifdef NDEBUG
-static const bool enable_validation_layers = false;
+static constexpr bool enable_validation_layers = false;
 #else
-static const bool enable_validation_layers = true;
+static constexpr bool enable_validation_layers = true;
+#endif
+
 #endif

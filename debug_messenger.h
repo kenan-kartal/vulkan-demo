@@ -10,10 +10,8 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(
 	void *user_data
 );
 
-class Debug_messenger {
-public:
-	Debug_messenger(VkInstance instance) : _instance{instance} {
-		VkDebugUtilsMessengerCreateInfoEXT create_info {
+inline VkDebugUtilsMessengerCreateInfoEXT default_messenger_create_info() {
+ return VkDebugUtilsMessengerCreateInfoEXT {
 			.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
 			.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT
 				| VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
@@ -25,6 +23,12 @@ public:
 			.pfnUserCallback = debug_callback,
 			.pUserData = nullptr
 		};
+}
+
+class Debug_messenger {
+public:
+	Debug_messenger(VkInstance instance) : _instance{instance} {
+		VkDebugUtilsMessengerCreateInfoEXT create_info { default_messenger_create_info() };
 		create_func = (PFN_vkCreateDebugUtilsMessengerEXT) (vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
 		destroy_func = (PFN_vkDestroyDebugUtilsMessengerEXT) (vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
 		if (!create_func || !destroy_func)

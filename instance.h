@@ -1,6 +1,9 @@
 #ifndef INSTANCE_H
 #define INSTANCE_H
 
+#include "debug_messenger.h"
+#include "config.h"
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -35,6 +38,10 @@ public:
 			.enabledExtensionCount = static_cast<uint32_t>(required_extensions.size()),
 			.ppEnabledExtensionNames = required_extensions.data(),
 		};
+		if (enable_validation_layers) {
+			VkDebugUtilsMessengerCreateInfoEXT outer_messenger {default_messenger_create_info()};
+			create_info.pNext = &outer_messenger;
+		}
 		VkResult res = vkCreateInstance(&create_info, nullptr, &_instance);
 		_initialised = res == VK_SUCCESS;
 	}
