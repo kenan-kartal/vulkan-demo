@@ -7,7 +7,7 @@
 class Window {
 public:
 	Window(int width = 800, int height = 600) {
-		_initialised = glfwInit();
+		_initialised = glfwInit() == GLFW_TRUE;
 		if (!_initialised)
 			return;
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
