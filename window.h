@@ -23,16 +23,18 @@ public:
 	}
 
 	bool should_close() const {
-		return glfwWindowShouldClose(_window);
+		return !_initialised || glfwWindowShouldClose(_window);
 	}
 
 	void poll() const {
+		if(!_initialised)
+			return;
 		glfwPollEvents();
 	}
 
 private:
-	bool _initialised{};
 	GLFWwindow* _window{};
+	bool _initialised{};
 };
 
 #endif

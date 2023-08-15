@@ -1,14 +1,10 @@
 #include "instance.h"
 
+#include "config.h"
+
 #include <iostream>
 #include <vector>
 #include <cstring>
-
-#ifdef NDEBUG
-static const bool enable_validation_layers = false;
-#else
-static const bool enable_validation_layers = true;
-#endif
 
 static const char *validation_layer_name = "VK_LAYER_KHRONOS_validation";
 
@@ -68,6 +64,9 @@ bool has_required_extensions() {
 	const char **glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 	for (int i = 0; i < glfw_extension_count; ++i) {
 		required_extensions.push_back(glfw_extensions[i]);
+	}
+	if (enable_validation_layers) {
+		required_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 	}
 	auto get_req_extension_name = [](const char* en) {return en;};
 	print_list(required_extensions, "Required extensions:", get_req_extension_name);

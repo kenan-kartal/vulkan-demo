@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <memory>
 
 extern std::vector<const char*> required_layers;
 extern std::vector<const char*> required_extensions;
@@ -43,6 +44,8 @@ public:
 			return;
 		vkDestroyInstance(_instance, nullptr);
 	}
+
+	VkInstance get() const { return _instance; }
 
 private:
 	VkInstance _instance;
