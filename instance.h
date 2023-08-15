@@ -4,13 +4,20 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <iostream>
 #include <vector>
+
+extern std::vector<const char*> required_layers;
+extern std::vector<const char*> required_extensions;
+
+bool has_required_layers();
+bool has_required_extensions();
 
 class Instance {
 public:
 	Instance() {
-		print_available_extensions();
+		bool has_support = has_required_layers() && has_required_extensions();
+		if (!has_support)
+			return;
 		VkApplicationInfo app_info {
 			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 			.pApplicationName = "Vulkan Demo",
@@ -19,14 +26,13 @@ public:
 			.engineVersion = VK_API_VERSION_1_0,
 			.apiVersion = VK_API_VERSION_1_0
 		};
-		uint32_t glfw_extension_count{};
-		const char **glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 		VkInstanceCreateInfo create_info {
 			.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 			.pApplicationInfo = &app_info,
-			.enabledLayerCount = 0,
-			.enabledExtensionCount = glfw_extension_count,
-			.ppEnabledExtensionNames = glfw_extensions,
+			.enabledLayerCount = static_cast<uint32_t>(required_layers.size()),
+			.ppEnabledLayerNames = required_layers.data(),
+			.enabledExtensionCount = static_cast<uint32_t>(required_extensions.size()),
+			.ppEnabledExtensionNames = required_extensions.data(),
 		};
 		VkResult res = vkCreateInstance(&create_info, nullptr, &_instance);
 		_initialised = res == VK_SUCCESS;
@@ -36,18 +42,6 @@ public:
 		if (!_initialised)
 			return;
 		vkDestroyInstance(_instance, nullptr);
-	}
-
-private:
-	void print_available_extensions() const {
-		uint32_t extension_count{};
-		vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
-		std::vector<VkExtensionProperties> extensions(extension_count);
-		vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, extensions.data());
-		std::cout << "Available extensions:\n";
-		for (const auto& extension: extensions) {
-			std::cout << '\t' << extension.extensionName << '\n';
-		}
 	}
 
 private:
