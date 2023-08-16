@@ -1,6 +1,10 @@
 #include "window.h"
 #include "instance.h"
+#include "logic_dev.h"
+
 #include "config.h"
+
+#include <memory>
 
 int main() {
 	Window window{};
@@ -8,6 +12,7 @@ int main() {
 	std::unique_ptr<Debug_messenger> messenger;
 	if (enable_validation_layers)
 		messenger = std::make_unique<Debug_messenger>(instance.get());
+	Logical_device device{instance.get()};
 
 	while(!window.should_close()){
 		window.poll();

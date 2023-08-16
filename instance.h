@@ -8,7 +8,6 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
-#include <memory>
 
 extern std::vector<const char*> required_layers;
 extern std::vector<const char*> required_extensions;
