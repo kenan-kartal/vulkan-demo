@@ -22,6 +22,8 @@ public:
 		glfwTerminate();
 	}
 
+	GLFWwindow* get() const { return _window; }
+
 	bool should_close() const {
 		return !_initialised || glfwWindowShouldClose(_window);
 	}
