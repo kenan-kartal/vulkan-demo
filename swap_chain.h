@@ -4,6 +4,7 @@
 #include "phys_dev.h"
 #include "logic_dev.h"
 #include "window.h"
+#include "image_view.h"
 
 #include <vector>
 
@@ -53,9 +54,8 @@ public:
 		_initialised = res == VK_SUCCESS;
 		if (!_initialised)
 			return;
-		vkGetSwapchainImagesKHR(_device, _swap_chain, &image_count, nullptr);
-		_images.resize(image_count);
-		vkGetSwapchainImagesKHR(_device, _swap_chain, &image_count, _images.data());
+		make_images();
+		make_image_views();
 	}
 
 	~Swap_chain() {
@@ -67,7 +67,12 @@ public:
 	VkSwapchainKHR get() const { return _swap_chain; }
 
 private:
+	void make_images();
+	void make_image_views();
+
+private:
 	std::vector<VkImage> _images;
+	std::vector<Image_view> _image_views;
 	VkSwapchainKHR _swap_chain{};
 	VkDevice _device{};
 	VkFormat _format;
