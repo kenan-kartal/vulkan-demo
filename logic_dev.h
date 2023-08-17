@@ -18,9 +18,9 @@ public:
 		if (!_surface.get())
 			return;
 		auto phy_ind_pair = pick_physical_device(instance, _surface.get());
-		VkPhysicalDevice phys_device = phy_ind_pair.first;
+		_physical_device = phy_ind_pair.first;
 		Queue_family_indices indices = phy_ind_pair.second;
-		if (!phys_device)
+		if (!_physical_device)
 			return;
 		std::vector<VkDeviceQueueCreateInfo> queue_create_infos{};
 		float priority = 1.0f;
@@ -42,9 +42,11 @@ public:
 			.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 			.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size()),
 			.pQueueCreateInfos = queue_create_infos.data(),
+			.enabledExtensionCount = static_cast<uint32_t>(device_extensions.size()),
+			.ppEnabledExtensionNames = device_extensions.data(),
 			.pEnabledFeatures = &features
 		};
-		auto res = vkCreateDevice(phys_device, &device_create_info, nullptr, &_device);
+		auto res = vkCreateDevice(_physical_device, &device_create_info, nullptr, &_device);
 		_initialised = res == VK_SUCCESS;
 		if (!_initialised)
 			return;
@@ -58,12 +60,17 @@ public:
 		vkDestroyDevice(_device, nullptr);
 	}
 
+	VkDevice get() const { return _device; }
+	VkPhysicalDevice physical_device() const { return _physical_device; }
+	const Surface& surface() const { return _surface; }
 	VkQueue queue_graphics() const { return _queue_graphics; }
 	VkQueue queue_present() const { return _queue_present; }
 
+
 private:
-	Surface _surface;
 	VkDevice _device{};
+	VkPhysicalDevice _physical_device{};
+	Surface _surface;
 	VkQueue _queue_graphics{};
 	VkQueue _queue_present{};
 	bool _initialised{};
