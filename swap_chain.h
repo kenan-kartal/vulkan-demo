@@ -65,6 +65,8 @@ public:
 	}
 
 	VkSwapchainKHR get() const { return _swap_chain; }
+	VkFormat format() const { return _format; }
+	VkExtent2D extent() const { return _extent; }
 
 private:
 	void make_images();
