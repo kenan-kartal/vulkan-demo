@@ -4,6 +4,7 @@
 #include "swap_chain.h"
 #include "pipeline.h"
 #include "frame_buffers.h"
+#include "command_pool.h"
 
 #include "config.h"
 
@@ -19,6 +20,7 @@ int main() {
 	Swap_chain swap_chain{device, window.get()};
 	Pipeline pipeline{device.get(), swap_chain};
 	Frame_buffers frame_buffers{device.get(), pipeline.render_pass().get(), swap_chain};
+	Command_pool command_pool{device};
 
 	while(!window.should_close()){
 		window.poll();
