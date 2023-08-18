@@ -65,6 +65,7 @@ public:
 	}
 
 	VkSwapchainKHR get() const { return _swap_chain; }
+	const std::vector<Image_view>& image_views() const { return _image_views; }
 	VkFormat format() const { return _format; }
 	VkExtent2D extent() const { return _extent; }
 
