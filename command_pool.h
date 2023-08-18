@@ -43,6 +43,9 @@ public:
 		vkDestroyCommandPool(_device, _pool, nullptr);
 	}
 
+	VkCommandPool get() const { return _pool; }
+	VkCommandBuffer buffer() const { return _buffer; }
+
 private:
 	VkDevice _device;
 	VkCommandPool _pool;
@@ -50,13 +53,12 @@ private:
 	bool _initialised{};
 };
 
-inline void record(
+inline void record_command_buffer(
 		VkCommandBuffer buffer,
-		uint32_t image_index,
-		const Render_pass &render_pass,
-		const Frame_buffers &frame_buffers,
-		const Swap_chain &swap_chain,
-		const Pipeline &pipeline
+		VkRenderPass render_pass,
+		VkFramebuffer frame_buffer,
+		VkExtent2D extent,
+		VkPipeline pipeline
 		) {
 	VkCommandBufferBeginInfo begin_info {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -72,23 +74,23 @@ inline void record(
 	};
 	VkRenderPassBeginInfo render_pass_info {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-		.renderPass = render_pass.get(),
-		.framebuffer = frame_buffers.get()[image_index],
+		.renderPass = render_pass,
+		.framebuffer = frame_buffer,
 		.renderArea = VkRect2D {
 			.offset = {0, 0},
-			.extent = swap_chain.extent()
+			.extent = extent
 		},
 		.clearValueCount = 1,
 		.pClearValues = &clear_value
 	};
 	vkCmdBeginRenderPass(buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
-	vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.get());
+	vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
 	VkViewport viewport {
 		.x = 0.f,
 		.y = 0.f,
-		.width = static_cast<float>(swap_chain.extent().width),
-		.height = static_cast<float>(swap_chain.extent().height),
+		.width = static_cast<float>(extent.width),
+		.height = static_cast<float>(extent.height),
 		.minDepth = 0.f,
 		.maxDepth = 1.f
 	};
@@ -96,7 +98,7 @@ inline void record(
 
 	VkRect2D scissor {
 		.offset = {0, 0},
-		.extent = swap_chain.extent()
+		.extent = extent
 	};
 	vkCmdSetScissor(buffer, 0, 1, &scissor);
 

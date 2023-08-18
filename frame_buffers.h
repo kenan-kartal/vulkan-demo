@@ -39,7 +39,8 @@ public:
 		}
 	}
 
-	const std::vector<VkFramebuffer>& get() const { return _buffers; }
+	const VkFramebuffer* get() const { return _buffers.data(); }
+	size_t size() const { return _initialised_count; }
 
 private:
 	std::vector<VkFramebuffer> _buffers;
